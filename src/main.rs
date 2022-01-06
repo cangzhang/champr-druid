@@ -1,8 +1,5 @@
 use druid::im::Vector;
-use druid::widget::{
-    Checkbox, Flex, Label, LensWrap, List, MainAxisAlignment, Padding, Parse, Stepper, Switch,
-    TextBox, WidgetExt,
-};
+use druid::widget::{Checkbox, Flex, Label, LensWrap, List, MainAxisAlignment, Padding, Parse, Scroll, Stepper, Switch, TextBox, WidgetExt};
 use druid::{AppLauncher, Data, Lens, LensExt, LocalizedString, Widget, WindowDesc};
 use serde::{Deserialize, Serialize};
 
@@ -26,16 +23,16 @@ fn build_widget() -> impl Widget<AppState> {
     let mut row = Flex::row();
     let switch = LensWrap::new(Switch::new(), AppState::on);
     let check_box = LensWrap::new(Checkbox::new(""), AppState::checked);
-    let switch_label = Label::new("Setting label");
+    let switch_label = Label::new("Setting 标签");
 
     let switch = switch.on_click(|ctx, state, _| {
         state.on = !state.on;
         state.checked = !state.on;
     });
 
-    row.add_child(Padding::new(5.0, switch_label));
-    row.add_child(Padding::new(5.0, switch));
-    row.add_child(Padding::new(5.0, check_box));
+    row.with_child(Padding::new(5.0, switch_label))
+        .with_child(Padding::new(5.0, switch))
+        .with_child(Padding::new(5.0, check_box));
 
     let stepper = LensWrap::new(
         Stepper::new()
@@ -50,31 +47,33 @@ fn build_widget() -> impl Widget<AppState> {
         Parse::new(TextBox::new()),
         AppState::stepper_value.map(|x| Some(*x), |x, y| *x = y.unwrap_or(0.0)),
     );
-    textbox_row.add_child(Padding::new(5.0, textbox));
-    textbox_row.add_child(Padding::new(5.0, stepper.center()));
+    textbox_row.with_child(Padding::new(5.0, textbox))
+        .with_child(Padding::new(5.0, stepper.center()));
 
     let mut label_row = Flex::row();
-
     let label = Label::new(|data: &AppState, _env: &_| {
         format!("Stepper value: {0:.2}", data.stepper_value)
     });
 
     label_row.add_child(Padding::new(5.0, label));
 
-    col.set_main_axis_alignment(MainAxisAlignment::Center);
-    col.add_child(Padding::new(5.0, row));
-    col.add_child(Padding::new(5.0, textbox_row));
-    col.add_child(Padding::new(5.0, label_row));
-
-    col.add_child(build_list());
-
-    col.center()
+    col.set_main_axis_alignment(MainAxisAlignment::Start);
+    col.with_child(Padding::new(5.0, row))
+        .with_child(Padding::new(5.0, textbox_row))
+        .with_child(Padding::new(5.0, label_row))
+        .with_flex_child(build_list(), 1.0)
+        .center()
 }
 
 fn build_list() -> impl Widget<AppState> {
-    Flex::column()
-        .with_child(List::new(build_item).lens(AppState::sources))
-        .with_default_spacer()
+    Scroll::new(
+        Flex::column()
+            .must_fill_main_axis(true)
+            .with_child(List::new(build_item).lens(AppState::sources))
+            .with_default_spacer()
+    )
+        .vertical()
+        .expand_height()
 }
 
 fn build_item() -> impl Widget<SourceItem> {
