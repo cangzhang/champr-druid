@@ -61,8 +61,8 @@ fn build_widget() -> impl Widget<AppState> {
     label_row.add_child(Padding::new(5.0, label));
 
     col.set_main_axis_alignment(MainAxisAlignment::Start);
-    col.add_child(Padding::new(5.0, textbox_row));
     col.add_child(Padding::new(5.0, row));
+    col.add_child(Padding::new(5.0, textbox_row));
     col.add_child(Padding::new(5.0, label_row));
     col.add_flex_child(build_list(), 1.0);
     col.center()
