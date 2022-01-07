@@ -12,13 +12,14 @@ struct AppState {
     pub on: bool,
     pub stepper_value: f64,
     pub sources: Vector<SourceItem>,
+    pub selected: Vector<String>,
 }
 
 #[derive(Clone, Data, Lens, Serialize, Deserialize, Debug)]
 struct SourceItem {
     pub checked: bool,
     pub text: String,
-    // pub value: String,
+    pub value: String,
 }
 
 fn build_widget() -> impl Widget<AppState> {
@@ -80,10 +81,10 @@ fn build_list() -> impl Widget<AppState> {
 }
 
 fn build_item() -> impl Widget<SourceItem> {
-    let c = Checkbox::new("").lens(SourceItem::checked);
+    let cb = Checkbox::new("").lens(SourceItem::checked);
     let label = Label::raw().lens(SourceItem::text);
     Flex::row()
-        .with_child(c)
+        .with_child(cb)
         .with_child(label)
         .with_default_spacer()
 }
@@ -93,14 +94,21 @@ pub fn main() {
         .title(LocalizedString::new("switch-demo-window-title").with_placeholder("Switch Demo"));
 
     let window = window.window_size((320., 540.));
+    
+    let mut selected = vec![];
+    selected.push(String::from("source-1"));
+    selected.push(String::from("source-2"));
 
     let mut sources = vec![];
     for i in 1..30 {
         let text = format!("source {}", i);
+        let value = format!("source-{}", i);
+        let checked = selected.contains(&value);
         sources.push(SourceItem {
-            checked: false,
             text,
-        })
+            value,
+            checked,
+        });
     }
 
     AppLauncher::with_window(window)
@@ -110,6 +118,7 @@ pub fn main() {
             on: true,
             stepper_value: 1.0,
             sources: Vector::from(sources),
+            selected: Vector::from(selected)
         })
         .expect("launch failed");
 }
