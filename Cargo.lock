@@ -129,6 +129,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "champr-druid"
+version = "0.1.0"
+dependencies = [
+ "druid",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "cocoa"
 version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -303,15 +312,6 @@ dependencies = [
  "web-sys",
  "winapi",
  "wio",
-]
-
-[[package]]
-name = "druid-test"
-version = "0.1.0"
-dependencies = [
- "druid",
- "serde",
- "serde_json",
 ]
 
 [[package]]
